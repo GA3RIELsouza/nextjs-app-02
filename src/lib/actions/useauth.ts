@@ -19,6 +19,7 @@ export const signUpWithEmailAndPassword = async (data: SignupFormData) => {
       data.email,
       data.password
     );
+
     const user = userCredential.user;
 
     await sendEmailVerification(user);
@@ -30,12 +31,12 @@ export const signUpWithEmailAndPassword = async (data: SignupFormData) => {
     if (error instanceof FirebaseError) {
       if (error.code === "auth/email-already-in-use") {
         errorMessage = "Este e-mail já está em uso.";
-      } else if (error.code === "auth/weak-password") {
+      } else if (error.code === "auth/weak-password" || error.message.search("Missing password requirements")) {
         errorMessage = "A senha é muito fraca. Tente uma mais forte.";
       }
     }
 
-    return { success: false, error: errorMessage };
+    return { success: false, message: errorMessage, error: error };
   }
 };
 

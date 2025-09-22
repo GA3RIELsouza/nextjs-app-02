@@ -11,11 +11,14 @@ export const submitContactForm = async (data: FullFormData & SignupFormData) => 
     const signUpResult = await signUpWithEmailAndPassword({
         email: data.email,
         password: data.password,
-        confirmPassword: ""
+        confirmPassword: data.confirmPassword
     });
 
+    console.log("submitContactForm");
+    console.log(signUpResult);
+
     if (!signUpResult.success) {
-      return { success: false, error: signUpResult.error };
+      return { success: false, message: signUpResult.message, error: signUpResult.error };
     }
 
     await addDoc(collection(db, "next_app_accounts"), {
@@ -30,6 +33,6 @@ export const submitContactForm = async (data: FullFormData & SignupFormData) => 
     if (error instanceof FirebaseError) {
       errorMessage = error.message;
     }
-    return { success: false, error: errorMessage };
+    return { success: false, message: errorMessage, error: error };
   }
 };

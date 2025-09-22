@@ -50,11 +50,12 @@ export default function ContactSection() {
 
     if (result.success) {
       // Se deu tudo certo, mostra notificação de sucesso e limpa o formulário
-      toast.success("Mensagem enviada com sucesso!");
+      toast.success("Cadastrado com sucesso!");
       reset(); 
     } else {
+      console.log(result.message);
       // Se ocorreu um erro, mostra a notificação de erro
-      toast.error(result.error || "Ocorreu um erro inesperado.");
+      toast.error(result.message || "Ocorreu um erro inesperado.");
     }
   };
 
@@ -65,11 +66,10 @@ export default function ContactSection() {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
               <h1 className="text-3xl font-bold tracking-tight text-slate-800 sm:text-4xl">
-                Entre em Contato
+                Cadastrar-se
               </h1>
               <p className="mt-4 text-lg text-slate-600">
-                Tem alguma dúvida ou sugestão? Preencha o formulário abaixo e nossa
-                equipe retornará o mais breve possível.
+                Cadastre seu usuário no formulário abaixo.
               </p>
             </div>
           
@@ -98,7 +98,7 @@ export default function ContactSection() {
                 disabled={isSubmitting}
                 className="w-full inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-4 text-base font-medium text-white shadow-sm transition-all hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-indigo-400 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? "Enviando..." : "Enviar Mensagem"}
+                {isSubmitting ? "Cadastrando..." : "Cadastrar"}
               </button>
             </div>
           </form>
