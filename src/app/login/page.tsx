@@ -5,9 +5,16 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { FirebaseError } from 'firebase/app';
 
 // Imports diretos do Firebase para rodar no cliente
-import { GoogleAuthProvider, GithubAuthProvider, signInWithPopup, getAdditionalUserInfo } from "firebase/auth";
+import { 
+  GoogleAuthProvider, 
+  GithubAuthProvider, 
+  signInWithPopup, 
+  getAdditionalUserInfo,
+  fetchSignInMethodsForEmail // Importe a nova função
+} from "firebase/auth";
 import { auth } from "@/lib/firestore/firebaseconfig";
 
 import { loginSchema, type LoginFormData } from '@/lib/validations/formschema';
@@ -58,6 +65,7 @@ export default function LoginPage() {
     }
   }
 
+  // Função genérica para lidar com provedores OAuth
   const handleSignInWithProvider = async (provider: GoogleAuthProvider | GithubAuthProvider) => {
     setError(null);
     try {
@@ -68,10 +76,25 @@ export default function LoginPage() {
         await saveGoogleUserToFirestore(result.user);
       }
       
-      router.push('/dashboard');
+      // Use window.location.href para forçar o recarregamento
+      window.location.href = '/dashboard';
     } catch (error) {
-      console.error(error);
-      setError("Falha no login com o provedor selecionado.");
+      if (error instanceof FirebaseError && error.code === 'auth/account-exists-with-different-credential') {
+        const email = error.customData?.email as string;
+        if (email) {
+          const methods = await fetchSignInMethodsForEmail(auth, email);
+          const firstProvider = methods[0];
+          
+          let providerName = "desconhecido";
+          if (firstProvider === 'google.com') providerName = 'Google';
+          if (firstProvider === 'github.com') providerName = 'GitHub';
+
+          setError(`Você já se cadastrou com ${providerName}. Por favor, faça login usando sua conta do ${providerName}.`);
+        }
+      } else {
+        console.error(error);
+        setError("Falha no login com o provedor selecionado.");
+      }
     }
   };
 

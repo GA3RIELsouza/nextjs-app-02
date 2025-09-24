@@ -31,12 +31,12 @@ export const signupSchema = z
 
 // Opcional: schemas menores que você já tinha
 export const loginSchema = z.object({
-  email: z.string().email("Por favor, insira um e-mail válido."),
+  email: z.email("Por favor, insira um e-mail válido."),
   password: z.string().min(1, "A senha é obrigatória."),
 });
 
 export const forgotPasswordSchema = z.object({
-  email: z.string().email("Por favor, insira um e-mail válido para recuperar sua senha."),
+  email: z.email("Por favor, insira um e-mail válido para recuperar sua senha."),
 });
 
 // Schema unificado que combina contato + endereço + signup (inclui password + confirmPassword)
@@ -44,8 +44,13 @@ export const fullFormSchema = contactFormSchema
   .merge(addressFormSchema)
   .merge(signupSchema);
 
+export const profileSchema = z.object({
+  name: z.string().min(3, "O nome deve ter pelo menos 3 caracteres."),
+});
+
 // Tipos inferidos
 export type FullFormData = z.infer<typeof fullFormSchema>;
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type SignupFormData = z.infer<typeof signupSchema>;
 export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
+export type ProfileFormData = z.infer<typeof profileSchema>;

@@ -20,21 +20,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
+    // Este listener é a única fonte de verdade para o estado de autenticação
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
     });
-
     return () => unsubscribe();
   }, []);
 
   const logout = async () => {
     const result = await signOutAction();
     if (result.success) {
-      // 1. ATUALIZE O ESTADO LOCALMENTE PRIMEIRO
+      // Para o logout, a navegação suave com router.push funciona bem
+      // porque estamos definindo o usuário como nulo manualmente antes.
       setUser(null); 
-      
-      // 2. DEPOIS REDIRECIONE
       router.push('/login');
     } else {
       console.error("Falha ao fazer logout:", result.error);

@@ -4,9 +4,16 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Toaster, toast } from 'sonner';
 import { useRouter } from "next/navigation";
+import { FirebaseError } from "firebase/app";
 
 // Imports para o Google e GitHub Sign-Up
-import { GoogleAuthProvider, GithubAuthProvider, signInWithPopup, getAdditionalUserInfo } from "firebase/auth";
+import { 
+  GoogleAuthProvider, 
+  GithubAuthProvider, 
+  signInWithPopup, 
+  getAdditionalUserInfo,
+  fetchSignInMethodsForEmail 
+} from "firebase/auth";
 import { auth } from "@/lib/firestore/firebaseconfig";
 import { saveGoogleUserToFirestore } from "@/lib/actions/contactformaction";
 import { GoogleIcon } from "@/components/icons/google-icon";
@@ -66,10 +73,25 @@ export default function ContactSection() {
         toast.success("Cadastro com provedor realizado com sucesso!");
       }
       
-      router.push('/dashboard');
+      // Use window.location.href para forçar o recarregamento
+      window.location.href = '/dashboard';
     } catch (error) {
-      console.error(error);
-      toast.error("Ocorreu um erro ao tentar cadastrar com o provedor selecionado.");
+      if (error instanceof FirebaseError && error.code === 'auth/account-exists-with-different-credential') {
+        const email = error.customData?.email as string;
+        if (email) {
+          const methods = await fetchSignInMethodsForEmail(auth, email);
+          const firstProvider = methods[0];
+          
+          let providerName = "desconhecido";
+          if (firstProvider === 'google.com') providerName = 'Google';
+          if (firstProvider === 'github.com') providerName = 'GitHub';
+
+          toast.error(`Você já possui uma conta com este e-mail usando ${providerName}. Por favor, faça login com sua conta do ${providerName}.`);
+        }
+      } else {
+        console.error(error);
+        toast.error("Ocorreu um erro ao tentar cadastrar com o provedor selecionado.");
+      }
     }
   };
 
