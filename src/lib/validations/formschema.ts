@@ -48,9 +48,30 @@ export const profileSchema = z.object({
   name: z.string().min(3, "O nome deve ter pelo menos 3 caracteres."),
 });
 
+export interface Transaction {
+  id?: string;
+  description: string;
+  amount: number;
+  date: string; // Usaremos string no formato ISO (yyyy-mm-dd)
+  category: string;
+  type: 'revenue' | 'expense';
+  status?: 'Paid' | 'Pending'; // Opcional, apenas para despesas
+}
+
+// Schema de validação para o formulário de transação
+export const transactionSchema = z.object({
+  description: z.string().min(3, "A descrição é obrigatória."),
+  amount: z.number().positive("O valor deve ser positivo."),
+  date: z.string().min(1, "A data é obrigatória."),
+  category: z.string().min(1, "A categoria é obrigatória."),
+  type: z.enum(['revenue', 'expense']),
+  status: z.enum(['Paid', 'Pending']).optional(),
+});
+
 // Tipos inferidos
 export type FullFormData = z.infer<typeof fullFormSchema>;
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type SignupFormData = z.infer<typeof signupSchema>;
 export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 export type ProfileFormData = z.infer<typeof profileSchema>;
+export type TransactionFormData = z.infer<typeof transactionSchema>;

@@ -35,6 +35,12 @@ export default function Navbar() {
           // --- Se o usuário ESTIVER LOGADO ---
           <>
             <Link
+              href="/transactions"
+              className="text-sm font-semibold text-slate-700 hover:text-indigo-600 transition-colors"
+            >
+              Transações
+            </Link>
+            <Link
               href="/profile"
               className="text-sm font-semibold text-slate-700 hover:text-indigo-600 transition-colors"
             >
@@ -98,7 +104,15 @@ export default function Navbar() {
           {/* Botões de Ação Mobile (Logado vs Deslogado) */}
           {user ? (
             // --- Se o usuário ESTIVER LOGADO (Mobile) ---
-            <>
+              <>
+                <Link
+                href="/transactions"
+                className="text-sm font-semibold text-slate-700 hover:text-indigo-600 transition-colors"
+                onClick={() => setIsOpen(false)}
+              >
+                Transações
+              </Link>
+
               <Link
                 href="/profile"
                 className="flex items-center justify-center gap-2 w-full rounded-md border border-indigo-600 px-4 py-2 text-lg font-semibold text-indigo-600 shadow-sm"
