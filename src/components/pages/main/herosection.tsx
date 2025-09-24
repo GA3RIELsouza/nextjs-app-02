@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function HeroSection() {
   return (
@@ -12,14 +13,14 @@ export default function HeroSection() {
             Nós fornecemos as melhores ferramentas e serviços para ajudar você a alcançar o sucesso.
           </p>
           <div className="mt-10 flex items-center justify-center md:justify-start gap-x-6">
-            <a href="#get-started" className=" inline-flex items-center gap-x-2 rounded-md bg-indigo-600 px-6 py-3 
-                                text-sm font-semibold text-white shadow-sm  transition-all duration-300 ease-in-out 
-                                hover:(bg-indigo-700 shadow-lg -translate-y-1) focus-visible:outline 
-                                focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            > Começar Agora </a>
-            <a  href="#learn-more" className="text-sm font-semibold leading-6 text-slate-700 hover:text-slate-900">
+            <Link href="/pricing" className=" inline-flex items-center gap-x-2 rounded-md bg-indigo-600 px-6 py-3 
+              text-sm font-semibold text-white shadow-sm  transition-all duration-300 ease-in-out 
+              hover:(bg-indigo-700 shadow-lg -translate-y-1) focus-visible:outline 
+              focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            > Começar Agora </Link>
+            <Link href="/features" className="text-sm font-semibold leading-6 text-slate-700 hover:text-slate-900">
               Saiba mais <span aria-hidden="true">→</span>
-            </a>
+            </Link>
           </div>
         </div>
         <div className="hidden md:block">
