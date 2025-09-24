@@ -6,11 +6,10 @@ export default function HeroSection() {
       <div className="container mx-auto grid md:grid-cols-2 gap-12 items-center px-6">
         <div className="text-center md:text-left">
           <h1 className="text-4xl font-bold tracking-tight text-slate-800 sm:text-5xl md:text-6xl">
-            Transforme suas ideias em realidade
+            Gerencie seus gastos com inteligência
           </h1>
           <p className="mt-6 text-lg leading-8 text-slate-600">
-            Nós fornecemos as melhores ferramentas e serviços para ajudar você e
-            sua equipe a alcançarem o sucesso.
+            Nós fornecemos as melhores ferramentas e serviços para ajudar você a alcançar o sucesso.
           </p>
           <div className="mt-10 flex items-center justify-center md:justify-start gap-x-6">
             <a href="#get-started" className=" inline-flex items-center gap-x-2 rounded-md bg-indigo-600 px-6 py-3 

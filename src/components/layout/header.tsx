@@ -8,7 +8,7 @@ export default function Header() {
         
         {/* Logo */}
         <Link href="/" className="text-2xl font-bold text-slate-800">
-          Meu<span className="text-indigo-600">Site</span>
+          Fin<span className="text-indigo-600">Track</span>
         </Link>
         
         {/* Barra de Navegação */}
