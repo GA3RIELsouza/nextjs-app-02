@@ -10,7 +10,7 @@ import { GoogleAuthProvider, GithubAuthProvider, signInWithPopup, getAdditionalU
 import { auth } from "@/lib/firestore/firebaseconfig";
 import { saveGoogleUserToFirestore } from "@/lib/actions/contactformaction";
 import { GoogleIcon } from "@/components/icons/google-icon";
-import { GithubIcon } from "@/components/icons/github-icon"; // Importe o ícone
+import { GithubIcon } from "@/components/icons/github-icon";
 
 import ContactForm from "./contactformsection";
 import AddressForm from "./addressformsection";
@@ -29,7 +29,19 @@ export default function ContactSection() {
     reset,
   } = useForm<FullFormData>({
     resolver: zodResolver(fullFormSchema),
-    // ... valores padrão
+    defaultValues: {
+      name: "",
+      cpf: "",
+      email: "",
+      phone: "",
+      cep: "",
+      street: "",
+      number: "",
+      city: "",
+      state: "",
+      password: "",
+      confirmPassword: "",
+    },
   });
 
   const handleContactForm = async (data: FullFormData) => {
@@ -44,7 +56,6 @@ export default function ContactSection() {
     }
   };
 
-  // Função genérica para lidar com provedores OAuth no cadastro
   const handleSignUpWithProvider = async (provider: GoogleAuthProvider | GithubAuthProvider) => {
     try {
       const result = await signInWithPopup(auth, provider);
@@ -77,7 +88,6 @@ export default function ContactSection() {
           </div>
           
           <div className="w-full max-w-2xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden mt-12 p-6 space-y-6">
-            {/* Botões de Cadastro com Provedores */}
             <div className="space-y-4">
               <button
                 type="button"
@@ -110,7 +120,28 @@ export default function ContactSection() {
               onSubmit={handleSubmit(handleContactForm)}
               className="space-y-6"
             >
-              {/* ... (resto do formulário) ... */}
+              <ContactForm
+                control={control}
+                errors={errors}
+                setError={setError}
+                clearErrors={clearErrors}
+              />
+              <AddressForm
+                control={control}
+                errors={errors}
+                setValue={setValue}
+                setError={setError}
+                clearErrors={clearErrors}
+              />
+              <div>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-4 text-base font-medium text-white shadow-sm transition-all hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-indigo-400 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? "Cadastrando..." : "Cadastrar com E-mail"}
+                </button>
+              </div>
             </form>
           </div>
         </div>

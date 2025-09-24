@@ -3,22 +3,21 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/lib/firestore/firebaseconfig";
-import { signOutAction } from "@/lib/actions/useauth"; // caminho ajustado
+import { signOutAction } from "@/lib/actions/useauth";
+import { useRouter } from "next/navigation";
 
-// Define a interface para o valor do contexto
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  logout: () => Promise<{ success: boolean; error?: string }>;
+  logout: () => Promise<void>;
 }
 
-// Cria o contexto com um valor padrão
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Define o provedor de autenticação
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -30,7 +29,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const logout = async () => {
-    return await signOutAction(); // retorna o objeto { success, error }
+    const result = await signOutAction();
+    if (result.success) {
+      // 1. ATUALIZE O ESTADO LOCALMENTE PRIMEIRO
+      setUser(null); 
+      
+      // 2. DEPOIS REDIRECIONE
+      router.push('/login');
+    } else {
+      console.error("Falha ao fazer logout:", result.error);
+    }
   };
 
   const value: AuthContextType = {
@@ -46,7 +54,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// Hook customizado
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
