@@ -35,6 +35,12 @@ export default function Navbar() {
           // --- Se o usuário ESTIVER LOGADO ---
           <>
             <Link
+                href="/dashboard"
+                className="text-sm font-semibold text-slate-700 hover:text-indigo-600 transition-colors"
+              >
+              Dashboard
+            </Link>
+            <Link
               href="/transactions"
               className="text-sm font-semibold text-slate-700 hover:text-indigo-600 transition-colors"
             >
