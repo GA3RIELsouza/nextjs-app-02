@@ -100,7 +100,7 @@ export default function TransactionModal({ isOpen, onClose, onSubmit, transactio
           {/* Valor */}
           <div>
             <label>Valor (R$)</label>
-            <input type="number" step="0.01" {...register("amount")} className="w-full p-2 border rounded" />
+            <input type="number" step="0.01" {...register("amount", { setValueAs: (value) => Number(value) })} className="w-full p-2 border rounded" />
             {errors.amount && <p className="text-red-500 text-sm">{errors.amount.message}</p>}
           </div>
           
