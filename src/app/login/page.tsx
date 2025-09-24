@@ -5,8 +5,14 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { loginSchema, type LoginFormData } from '@/lib/validations/formschema';
+// Importe a nova função de login com Google
 import { signInAction, sendPasswordResetAction } from '@/lib/actions/useauth';
 import { useRouter } from 'next/navigation';
+import { GoogleIcon } from '@/components/icons/google-icon';
+import { GoogleAuthProvider, signInWithPopup, getAdditionalUserInfo } from "firebase/auth";
+import { auth } from "@/lib/firestore/firebaseconfig";
+import { saveGoogleUserToFirestore } from '@/lib/actions/contactformaction'; // Importe a nova action
+
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
@@ -30,9 +36,7 @@ export default function LoginPage() {
     if (!result.success) {
       setError(result.error || "Falha no login.");
     } else {
-      // O onAuthStateChanged no AuthContext cuidará de redirecionar
-      // ou atualizar a UI. Aqui podemos forçar um redirecionamento.
-      router.push('/dashboard'); // ou para a página principal
+      router.push('/dashboard');
     }
   };
   
@@ -52,6 +56,26 @@ export default function LoginPage() {
     }
   }
 
+  // Função para lidar com o login com Google
+  const handleSignInWithGoogle = async () => {
+    setError(null);
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const additionalUserInfo = getAdditionalUserInfo(result);
+
+      // Se for um usuário novo, salve no Firestore
+      if (additionalUserInfo?.isNewUser) {
+        await saveGoogleUserToFirestore(result.user);
+      }
+      
+      router.push('/dashboard');
+    } catch (error) {
+      console.error(error);
+      setError("Falha no login com o Google.");
+    }
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50">
       <div className="w-full max-w-md space-y-8 rounded-xl bg-white p-10 shadow-lg">
@@ -60,6 +84,28 @@ export default function LoginPage() {
             Acessar sua conta
           </h2>
         </div>
+
+        {/* Botão de Login com Google */}
+        <div className="space-y-4">
+            <button
+              type="button"
+              onClick={handleSignInWithGoogle}
+              className="flex w-full items-center justify-center gap-3 rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-slate-700 shadow-sm transition-all hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            >
+              <GoogleIcon className="h-5 w-5" />
+              Entrar com o Google
+            </button>
+        </div>
+
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-300" />
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="bg-white px-2 text-gray-500">Ou continue com</span>
+          </div>
+        </div>
+
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
           {/* Email */}
           <div>
@@ -153,4 +199,3 @@ export default function LoginPage() {
     </div>
   );
 }
-

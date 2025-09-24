@@ -6,7 +6,7 @@ import {
   sendEmailVerification,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
-  signOut,
+  signOut
 } from "firebase/auth";
 import { FirebaseError } from "firebase/app";
 import { type LoginFormData, type SignupFormData } from "@/lib/validations/formschema";
