@@ -1,12 +1,20 @@
 "use server";
 
 import { db } from "@/lib/firestore/firebaseconfig";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, setDoc, Timestamp } from "firebase/firestore"; // Import Timestamp
 import { revalidatePath } from "next/cache";
 import { FirebaseError } from "firebase/app";
 
+// 1. Definir uma interface clara para o perfil do usuário
+interface UserProfile {
+  name?: string;
+  email?: string;
+  createdAt?: string | null;
+  // Adicione outros campos do perfil aqui se necessário
+}
+
 // Função para buscar os dados do perfil do usuário no Firestore
-export async function getUserProfile(userId: string) {
+export async function getUserProfile(userId: string): Promise<{ success: boolean; data?: UserProfile; message?: string }> {
   if (!userId) {
     return { success: false, message: "ID do usuário não fornecido." };
   }
@@ -18,13 +26,16 @@ export async function getUserProfile(userId: string) {
     if (docSnap.exists()) {
       const data = docSnap.data();
       
-      const serializableData = {
+      const serializableData: UserProfile = {
         ...data,
-        createdAt: data.createdAt ? data.createdAt.toDate().toISOString() : null,
+        name: data.name,
+        email: data.email,
+        createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate().toISOString() : null,
       };
-      
+
       return { success: true, data: serializableData };
     } else {
+      // Retorna um objeto que corresponde à interface UserProfile
       return { success: true, data: { name: '', email: '' } };
     }
   } catch (error) {

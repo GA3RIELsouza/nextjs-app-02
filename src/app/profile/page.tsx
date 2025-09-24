@@ -28,10 +28,9 @@ export default function ProfilePage() {
   useEffect(() => {
     if (!loading && user) {
       setIsFormLoading(true);
-      // Passamos o ID do usuário para a Server Action
       getUserProfile(user.uid).then((result) => {
         if (result.success && result.data) {
-          // Se o nome não existir no Firestore, usa o nome do provedor (Google/GitHub)
+          // Acessar 'result.data.name' agora é seguro
           setValue("name", result.data.name || user.displayName || '');
         } else if (!result.success) {
           toast.error(result.message || "Não foi possível carregar os dados do perfil.");
@@ -49,7 +48,6 @@ export default function ProfilePage() {
       toast.error("Você não está autenticado.");
       return;
     }
-    // Passamos o ID do usuário e os dados do formulário para a Server Action
     const result = await updateUserProfile(user.uid, data);
 
     if (result.success) {
