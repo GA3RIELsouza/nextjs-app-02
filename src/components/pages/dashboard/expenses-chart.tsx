@@ -2,19 +2,17 @@
 
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-// Dados de exemplo. No futuro, isso viria do seu banco de dados.
-const expenseData = [
-  { name: 'Moradia', value: 1200 },
-  { name: 'Alimentação', value: 850 },
-  { name: 'Transporte', value: 450 },
-  { name: 'Lazer', value: 300 },
-  { name: 'Saúde', value: 500 },
-  { name: 'Outros', value: 250 },
-];
-
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF', '#FF4444'];
 
-export default function ExpensesChart() {
+interface ExpensesChartProps {
+    expenseData: { name: string; value: number }[];
+}
+
+export default function ExpensesChart({ expenseData }: ExpensesChartProps) {
+  if (!expenseData || expenseData.length === 0) {
+    return <p className="text-center text-gray-500 py-10">Sem dados de despesas para exibir.</p>;
+  }
+
   return (
     <ResponsiveContainer width="100%" height={320}>
       <PieChart>
