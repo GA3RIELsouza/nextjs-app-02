@@ -6,6 +6,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { FirebaseError } from 'firebase/app';
+import { useAuth } from '@/lib/actions/authcontext';
+
 
 // Imports diretos do Firebase para rodar no cliente
 import { 
@@ -28,6 +30,7 @@ export default function LoginPage() {
   const [success, setSuccess] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const { setUser } = useAuth();
 
   const {
     control,
@@ -42,9 +45,10 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormData) => {
     setError(null);
     const result = await signInAction(data);
-    if (!result.success) {
+    if (!result.success || !result.user) {
       setError(result.error || "Falha no login.");
     } else {
+      setUser(result.user);
       router.push('/dashboard');
     }
   };
@@ -76,6 +80,7 @@ export default function LoginPage() {
         await saveGoogleUserToFirestore(result.user);
       }
       
+      setUser(result.user);
       // Use window.location.href para forçar o recarregamento
       window.location.href = '/dashboard';
     } catch (error) {

@@ -6,7 +6,8 @@ import {
   sendEmailVerification,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
-  signOut
+  signOut,
+  User
 } from "firebase/auth";
 import { FirebaseError } from "firebase/app";
 import { type LoginFormData, type SignupFormData } from "@/lib/validations/formschema";
@@ -41,10 +42,16 @@ export const signUpWithEmailAndPassword = async (data: SignupFormData) => {
 };
 
 // Action para fazer login
-export const signInAction = async (data: LoginFormData) => {
+export const signInAction = async (data: LoginFormData): Promise<{ success: boolean; user?: User; error?: string; }> => {
   try {
-    await signInWithEmailAndPassword(auth, data.email, data.password);
-    return { success: true };
+    const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
+    // Acessando o objeto do usuário
+    const user = userCredential.user;
+    // O objeto 'user' não é serializável, então retornamos um objeto simples com os dados necessários
+    return { 
+        success: true, 
+        user: JSON.parse(JSON.stringify(user)) // Desserializa o objeto do usuário
+    };
   } catch (error) {
     let errorMessage = "Ocorreu um erro ao tentar fazer login.";
 

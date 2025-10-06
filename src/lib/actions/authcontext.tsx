@@ -10,6 +10,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   logout: () => Promise<void>;
+  setUser: (user: User | null) => void; // Adicione esta linha
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -20,7 +21,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
-    // Este listener é a única fonte de verdade para o estado de autenticação
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
@@ -31,9 +31,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = async () => {
     const result = await signOutAction();
     if (result.success) {
-      // Para o logout, a navegação suave com router.push funciona bem
-      // porque estamos definindo o usuário como nulo manualmente antes.
-      setUser(null); 
+      setUser(null);
       router.push('/login');
     } else {
       console.error("Falha ao fazer logout:", result.error);
@@ -44,6 +42,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     user,
     loading,
     logout,
+    setUser, // Adicione esta linha
   };
 
   return (
